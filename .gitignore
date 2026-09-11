@@ -1,0 +1,72 @@
+# Python caches and build products
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Project-local environments
+.venv/
+venv/
+env/
+.conda/
+
+# Local secrets (keep sanitized examples trackable)
+.env
+.env.*
+!.env.example
+!.env.template
+credentials/
+secrets/
+.secrets/
+credentials.json
+credentials.local.*
+secrets.local.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Editor and operating-system metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local data and downloaded model weights
+/data/local/
+/datasets/
+/assets/datasets/
+/assets/checkpoints/
+/assets/weights/
+/checkpoints/
+/weights/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+
+# Temporary outputs; keep evaluation summaries and benchmark scripts trackable
+*.log
+/logs/
+/tmp/
+/temp/
+/videos/
+/recordings/
+*.mp4
+*.avi
+*.mov
+*.webm
+/benchmarks/tmp/
+/benchmarks/artifacts/
+/evaluation/tmp/
