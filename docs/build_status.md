@@ -1,9 +1,9 @@
 # Build status
 
-Stage 1 is complete. All future components are NOT IMPLEMENTED.
+Stages 1 and 2 are complete. Robotics and all later-stage components are NOT IMPLEMENTED.
 
 1. Repository & machine audit — COMPLETE
-2. Python environment & dependency policy — NOT STARTED
+2. Python environment & dependency policy — COMPLETE
 3. MuJoCo smoke foundation — NOT STARTED
 4. Dual SO-101 model — NOT STARTED
 5. Challenge scene, objects & cameras — NOT STARTED
