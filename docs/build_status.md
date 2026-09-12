@@ -1,13 +1,13 @@
 # Build status
 
-Stages 1-5 are complete. The MuJoCo foundation, authentic dual SO-101 model, and physical challenge scene with seeded objects, drawer and RGB cameras work. Manipulation and all later-stage components are NOT IMPLEMENTED.
+Stages 1-6 are complete. The authentic dual SO-101 challenge scene supports reproducible physics/cameras and bounded position reachability checks. Motion execution, grasping and later autonomous manipulation components are NOT IMPLEMENTED.
 
 1. Repository & machine audit — COMPLETE
 2. Python environment & dependency policy — COMPLETE
 3. MuJoCo smoke foundation — COMPLETE
 4. Dual SO-101 model — COMPLETE
 5. Challenge scene, objects & cameras — COMPLETE
-6. Robot control foundation — NOT STARTED
+6. Robot control foundation (reachability) - COMPLETE
 7. Single-arm manipulation skills — NOT STARTED
 8. Genuine bimanual behavior — NOT STARTED
 9. World state, predicates & episode logging — NOT STARTED

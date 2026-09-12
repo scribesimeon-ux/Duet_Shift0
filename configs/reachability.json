@@ -1,0 +1,21 @@
+{
+  "max_iterations": 100,
+  "restarts": 4,
+  "tolerance_m": 0.002,
+  "damping": 0.015,
+  "max_joint_step_rad": 0.15,
+  "line_search_factors": [
+    1.0,
+    0.5,
+    0.25,
+    0.1
+  ],
+  "workspace_height_m": [
+    0.015,
+    0.55
+  ],
+  "object_clearance_m": 0.08,
+  "drawer_front_offset_m": 0.07,
+  "drawer_up_offset_m": 0.08,
+  "table_target_height_m": 0.14
+}

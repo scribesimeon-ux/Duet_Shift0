@@ -1,6 +1,6 @@
 # Windows development with VS Code and PowerShell
 
-Stages 2-5 provide the Python environment, MuJoCo smoke checks, authentic dual SO-101 robots and a physical challenge scene. Manipulation and AI are not implemented.
+Stages 2-6 provide the Python environment, MuJoCo smoke checks, authentic dual SO-101 robots, a physical challenge scene and position reachability checks. Motion execution, grasping and AI are not implemented.
 
 **FINAL INTEL DEPLOYMENT IS A SEPARATE LATER STAGE.**
 
@@ -184,3 +184,22 @@ python -m pip check
 ```
 
 Read [challenge scene details](challenge_scene.md) for layout, reset API, metadata, randomization ranges and known modeling limits. **FINAL INTEL DEPLOYMENT IS A SEPARATE LATER STAGE.**
+
+
+## Reachability checks (Stage 6)
+
+Stage 6 checks whether an arm's end-effector reference can reach a useful approach point in the existing scene. It does not execute a motion path or grasp an object.
+
+```powershell
+python scripts/check_reachability.py --arm arm_a --target bottle
+python scripts/check_reachability.py --arm arm_b --target mug
+python scripts/check_reachability.py --seed 42 --all
+python scripts/check_reachability.py --arm arm_a --target bottle --viewer
+python -m pytest tests/test_reachability.py
+```
+
+The script prints the current end-effector state, target, solver status, position error and joint solution. `reachable` means within 2 mm with no detected contacts at the endpoint. `ik_failed` means this bounded search did not find a solution; it does not prove a grasp is impossible. The all-target check reports failed pairings and requires at least one accepted arm per target.
+
+The viewer shows a static solved pose and pink target marker, then closes after eight seconds. It is a pose inspection, not a demonstration of robot motion. Use `--render` for an RGB check or `--save-image` for a PNG under ignored `tmp/reachability/`. Full validation remains `python -m pytest` and `python -m pip check`.
+
+See [reachability foundation](reachability.md) for custom target coordinates, result meanings, configuration, state isolation and limitations. Stage 05 scene/reset/physics/camera commands remain available unchanged.

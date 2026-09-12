@@ -205,3 +205,44 @@ The final full suite passed **42 tests in 16.73 seconds**, including all 23 base
 The drawer is a simplified open-top fixture. The spoon bowl is solid; object dimensions, mass distribution and material contacts are approximate. Robot bases are fixed to the world rather than simulated mounting hardware. The upstream base collision limitation remains. Reachability, gripping, moving-drawer interactions, bimanual tasks and robustness outside the conservative reset ranges are unvalidated later-stage work. No manipulation, IK, opening controller, planning, AI, perception, recovery, liquid simulation or final Intel deployment was implemented.
 
 Stage 5 is COMPLETE based on the scene, physics, camera, regression and dependency checks. Stages 6-21 remain NOT STARTED. Final Git/new-file checks are recorded with the delivery report. No commit or push was performed.
+
+
+## Stage 6: Reachability foundation (2026-09-12)
+
+### Startup and environment
+
+Work used only the authoritative `C:\Users\HP\Projects\DuetShift` repository. The starting worktree was clean on `main` at `e6be5fb355f66966a65cd5476cdbcbda23e06c77` (`feat: add Stage 05 challenge scene`). HEAD and the stored `origin/main` reference matched. No Git trust, remote, branch-history or environment settings were changed. The existing complete baseline passed **42 tests in 17.51 seconds** before substantive changes.
+
+All Python execution explicitly used `C:\Users\HP\miniforge3\envs\duetshift-dev\python.exe`, Python 3.12.14, MuJoCo 3.13.0. Importing `duetshift` resolved inside the authoritative repository's `src/duetshift`. The direct-interpreter workaround avoids relying on inherited shell activation. Host write permission was needed because this workspace is outside the session's configured writable sandbox.
+
+### Implementation and acceptance evidence
+
+The new module reuses Stage 05's arm/joint/actuator/site/object/drawer metadata. No existing simulation module, scene config, upstream robot asset, dependency declaration or baseline test was changed. Task targets validate finite world-space xyz values and optional arm/quaternion metadata. End-effector reports include actual world position/orientation and all six named joint coordinates.
+
+Position IK uses the MuJoCo site Jacobian and NumPy damped least squares on the five non-jaw joints, bounded to at most four attempts of 100 iterations. Joint coordinates are restricted to source joint/control-limit intersections. A private fixed-seed restart generator is deterministic. Orientation constraints return an explicit unsupported status. Failures distinguish scope rejection, bounded nonconvergence, detected endpoint collision and numerical/state errors.
+
+Every solve uses independent MuJoCo data and leaves the live scene untouched. Tests compare complete integration state and model fields, verify opposite-arm/gripper/objects remain unchanged in detached previews, reject mismatched arms and stale colliding previews, and exercise injected numerical failure. Collision checks use the existing model and do not claim full route clearance or complete collision geometry.
+
+Approach targets use current object geometry bounds plus 80 mm clearance, or actual drawer-handle position plus 70 mm forward and 80 mm upward offsets. Table target and policy/solver limits are configured in `configs/reachability.json`.
+
+### Representative target results
+
+The focused tests evaluated all seven semantic targets with both arms for seeds 0, 42 and 43. Headless runner matrix checks also passed for settled seeds 42 and 43. Both arms found accepted table, plate, fork, spoon and drawer-handle approach endpoints. Arm A found the bottle approach and arm B the mug approach. Each semantic target therefore had at least one accepted arm, without moving objects/bases or weakening Stage 05 validations.
+
+For settled seed 42, arm A's bottle error was 1.362 mm and arm B's mug error 0.093 mm. Plate errors were 0.701 mm (A) and 1.251 mm (B); table errors 1.487 mm (A) and 0.585 mm (B). All accepted solutions were within the 2 mm threshold and had no detected selected-arm endpoint contacts.
+
+Arm A's mug pairing did not converge (47.551 mm residual), nor did arm B's bottle pairing (108.976 mm residual). These remain reported IK failures, not mathematical impossibility claims. A target at `(10, 0, 1)` was rejected as outside the configured workspace before any iteration. The in-policy far target `(0.55, 0.39, 1.24)` stopped after 400 iterations with `ik_failed` and 0.463168 m residual. Both single-target CLI checks correctly exited 1.
+
+### Viewer, graphics and resolved problem
+
+The first render attempts for both arms failed with `UnboundLocalError`: a conditional `import mujoco.viewer` shadowed the module name in the render branch. An explicit viewer alias corrected this Python scope error. A rendering regression test now protects that path; no graphics package or driver change was needed.
+
+The corrected arm-A bottle command rendered and opened an eight-second bounded passive viewer successfully. Arm B's mug command rendered successfully. Both 640x480 RGB static preview images were visually examined: the selected arm's reference is beside the pink target marker, with the other arm and challenge scene present. These previews show configurations, not motion or physical tracking. Images are ignored under `tmp/reachability/`, not tracked. Manual early-close behavior was not tested.
+
+### Final validation and scope
+
+The final focused suite passed **31 tests in 9.30 seconds**. The complete suite passed **73 tests in 25.03 seconds**, including all 42 baseline tests, with no skips. Stage 05 scene commands for seed 42 with all cameras and seed 43 both passed. `pip check` reported no broken requirements. No package was installed or upgraded, and no prohibited future-stage framework was added.
+
+New/modified files were reviewed for scope, whitespace, credential patterns and generated artifacts. `git diff --check` passed. Stage 6 is COMPLETE; Stages 7-21 remain NOT STARTED. No commit or push was performed.
+
+The method establishes position endpoints only. Gripper orientation, feasible paths, servo tracking, grasp contacts, simultaneous dual-arm configurations and object manipulation remain unvalidated. The upstream base-collision omission and other source collision approximations remain documented limitations. No autonomous planner, policy training, perception, force controller, hardware/network service or Stage 07 behavior was introduced.
