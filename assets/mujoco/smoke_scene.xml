@@ -1,0 +1,12 @@
+<mujoco model="duetshift_smoke">
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+  <worldbody>
+    <light name="smoke_light" pos="0 -1 3"/>
+    <camera name="smoke_camera" pos="1 -1 0.8" xyaxes="1 1 0 -0.4 0.4 1"/>
+    <geom name="floor" type="plane" size="2 2 0.1" rgba="0.6 0.6 0.6 1"/>
+    <body name="falling_body" pos="0 0 0.5">
+      <freejoint name="falling_joint"/>
+      <geom name="falling_sphere" type="sphere" size="0.05" mass="0.1" rgba="0.2 0.4 0.8 1"/>
+    </body>
+  </worldbody>
+</mujoco>

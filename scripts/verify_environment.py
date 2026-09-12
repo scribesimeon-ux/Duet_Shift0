@@ -25,11 +25,13 @@ def main():
         "Appears inside duetshift-dev: "
         + ("YES" if appears_correct else "NOT CONFIRMED (check activation)")
     )
+    mujoco_present = importlib.util.find_spec("mujoco") is not None
+    print(f"MuJoCo: {'INSTALLED (required for Stage 3)' if mujoco_present else 'NOT INSTALLED (required for Stage 3)'}")
     for label, module in (
-        ("MuJoCo", "mujoco"),
         ("OpenVINO", "openvino"),
         ("LeRobot", "lerobot"),
         ("PyTorch", "torch"),
+        ("Speechmatics", "speechmatics"),
     ):
         found = importlib.util.find_spec(module) is not None
         print(f"{label}: {'PRESENT (not imported or tested)' if found else 'NOT INSTALLED (expected)'}")
@@ -40,7 +42,10 @@ def main():
             file=sys.stderr,
         )
         return 1
-    print("PASS: Stage 2 Python version requirement satisfied.")
+    if not mujoco_present:
+        print('ERROR: Install the project dependencies with python -m pip install -e ".[dev]".', file=sys.stderr)
+        return 1
+    print("PASS: Python version and Stage 3 MuJoCo availability requirements satisfied.")
     return 0
 
 

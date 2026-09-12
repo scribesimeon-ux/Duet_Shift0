@@ -90,3 +90,39 @@ Conda printed an informational promotion for its conda-pypi beta; that feature w
 ### Final Stage 2 repository validation
 
 Reviewed the tracked diff and all six new-file diffs. `git diff --check`, new-file whitespace checks, secret-pattern checks, text/binary and size checks, README links, and packaging/declaration checks passed. All nine changed/new files are small text files; no large binaries or robotics implementation were introduced. A negative verification probe simulated Python 3.11 version information within the project Python 3.12 process and confirmed exit code 1 with the required clear error. Stages 1 and 2 are COMPLETE; all 19 later stages are NOT STARTED. The three existing modified files and six new files remain uncommitted; nothing was pushed and no working project file was deleted.
+
+## Stage 3: MuJoCo smoke foundation (2026-09-12)
+
+### Repository and interpreter preflight
+
+The preceding Stage 1/2 sections are historical records and are preserved. Stage 3 began with a clean working tree on `main`, at committed Stage 2 revision `ef2c765e775a127dcaa8d7d8e4e29db3cae9e32f`. Local `main`, stored `origin/main`, and a live `git ls-remote origin refs/heads/main` check matched. No local instructions or unrelated work needed changing.
+
+The initial Stage 3 attempt stopped without modifications because the command session resolved `python` to `C:\Python314\python.exe` (3.14.4), with `CONDA_DEFAULT_ENV` unset. The user's debug continuation explicitly authorized activation, `conda run`, or direct invocation of the existing project interpreter. The new command session still did not inherit the user's terminal activation, so all subsequent installs and checks explicitly used `C:\Users\HP\miniforge3\envs\duetshift-dev\python.exe`. Before installing, Python `3.12.14` and that exact `sys.prefix` were asserted successfully; MuJoCo was absent. No environment was created, Miniforge reinstalled, or shell configuration changed.
+
+### Installed dependency and recreation
+
+Official MuJoCo installed successfully from PyPI into `duetshift-dev`, resolving the stable CPython 3.12 Windows AMD64 wheel at version **3.13.0**. Import and `mujoco.__version__` succeeded. The exact direct dependency `mujoco==3.13.0` is recorded in `pyproject.toml`; transitive dependencies are not pinned.
+
+New transitive packages resolved by MuJoCo: absl-py 2.5.0, etils 1.14.0, fsspec 2026.7.0, glfw 2.10.2, numpy 2.5.3, PyOpenGL 3.1.10, typing_extensions 4.16.0, and zipp 4.1.0. These are package-declared dependencies, not separately selected graphics workarounds. The editable project was refreshed with `python -m pip --isolated install --index-url https://pypi.org/simple -e ".[dev]"` using the explicit environment interpreter. Pip replaced only the existing editable duetshift metadata during this normal reinstall. No project dependencies were installed globally.
+
+`environment.yml` remains unchanged: create its Python/pip base, activate it, then run the editable project installation to install the exact direct MuJoCo version. This existing two-step workflow remains portable. Keep the source repository and its XML asset together; a standalone wheel containing the XML is outside this stage's scope. Official API/install reference: [MuJoCo Python documentation](https://mujoco.readthedocs.io/en/stable/python.html).
+
+### Observed physics and graphics
+
+- Physics PASS: a 0.1 kg sphere of radius 0.05 m starts at `(0, 0, 0.5)` above a plane. Gravity is `(0, 0, -9.81)` and timestep is 0.002 s. There are no robot, table, drawer, or downloaded scene assets.
+- After 50 physics steps (0.1 s), the sphere center reached z = 0.449969 m. After 1000 steps (2 s), its center was z = 0.049632818 m. Named sphere/floor contact, sustained support, advancing time, and initial-state reset all passed. Small contact penetration is accepted by the 5 mm floor tolerance; no state edits fake motion.
+- Offscreen RGB PASS: the official renderer produced a `(120, 160, 3)` uint8 frame with pixel range 0..183 using the named camera. No image dataset or file was saved.
+- Interactive viewer PASS in the permitted Windows desktop process: the official passive viewer opened, synchronized 725 updates, and closed cleanly after the bounded run. This is programmatic lifecycle evidence; no visual screenshot inspection or manual early-close test was performed.
+- Graphics workers are separate processes with a 20-second parent timeout. The viewer also has an 8-second loop limit. Default headless physics never creates a graphics context. Graphics failures, native exits, or timeouts are reported separately; they cannot turn an otherwise valid physics check into fabricated graphics success.
+
+### Warnings and scope
+
+Pip warned that `f2py.exe` and `numpy-config.exe` were installed in the environment's Scripts directory, which was not on this command session's PATH. This follows from using the explicit interpreter without shell activation. Neither helper executable is required by the smoke checks; no global PATH change was made. Users should activate `duetshift-dev` in their own PowerShell terminal. Git may report the existing LF-to-CRLF working-copy warnings; line-ending settings remain unchanged.
+
+No PyTorch, LeRobot, OpenVINO, Speechmatics, ROS2, Docker, SO-101 models, control, IK, planning, manipulation, perception, or AI functionality was added. The future architecture is unchanged. Rendering has no observed Stage 5 blocker on this machine, but the check establishes only a small RGB frame, not future camera/perception behavior.
+
+The first complete host pytest run reported 11 passed and one fixture setup error: `PermissionError: [WinError 5] Access is denied: 'C:\Users\HP\AppData\Local\Temp\pytest-of-HP'`. This affected the path-resolution test's unnecessary `tmp_path` fixture, not physics or graphics. The test now changes into the existing interpreter directory outside the repository without creating files. No temporary-directory permissions were changed or files deleted. Validation was rerun after this test-only correction.
+
+### Final Stage 3 acceptance
+
+The complete rerun passed **12 tests in 2.33 seconds**, including all 3 unchanged Stage 2 tests and the isolated offscreen render check; no tests were skipped. Environment verification and the default non-GUI smoke script exited 0. `pip check` reported no broken requirements, and installed duetshift metadata lists `mujoco==3.13.0`. Module discovery confirmed torch, lerobot, openvino, speechmatics, and rclpy are absent. The repository diff and new text files were reviewed for scope, whitespace, secrets, and unexpected binaries. Stage 3 is COMPLETE; Stages 4–21 remain NOT STARTED. No commits, pushes, resets, remote changes, or existing working-file deletions were performed.
