@@ -1,6 +1,6 @@
 # Windows development with VS Code and PowerShell
 
-Stage 2 establishes the Python package and environment. Stage 3 adds a small MuJoCo physics smoke scene. There is no robot or challenge application yet.
+Stages 2-5 provide the Python environment, MuJoCo smoke checks, authentic dual SO-101 robots and a physical challenge scene. Manipulation and AI are not implemented.
 
 **FINAL INTEL DEPLOYMENT IS A SEPARATE LATER STAGE.**
 
@@ -65,7 +65,7 @@ The verification script reports the interpreter, OS, architecture, and whether P
 
 ## MuJoCo smoke simulation (Stage 3)
 
-[MuJoCo](https://mujoco.readthedocs.io/en/stable/python.html) is a physics simulator. This project currently uses it only to drop a small sphere onto a floor. It has no robots, manipulation, or AI.
+[MuJoCo](https://mujoco.readthedocs.io/en/stable/python.html) is a physics simulator. The Stage 3 smoke check drops a small sphere onto a floor. The separate Stage 4 and Stage 5 scenes described below add the robots and workspace.
 
 From the repository root:
 
@@ -142,3 +142,45 @@ conda deactivate
 ```
 
 This leaves the project environment in that terminal; it does not uninstall anything. Activate `duetshift-dev` again before the next development session.
+
+## Challenge scene, objects and cameras (Stage 5)
+
+Open the authoritative DuetShift folder in VS Code and use **Terminal -> New Terminal**. On the current development machine the folder is `C:\Users\HP\Projects\DuetShift`. Confirm the terminal is in that folder before running commands. Activate and verify:
+
+```powershell
+conda activate duetshift-dev
+python --version
+python -c "import sys; print(sys.executable)"
+python -c "import duetshift; print(duetshift.__file__)"
+```
+
+Python must be 3.12 from `duetshift-dev`, and the package path must point inside the folder you opened. If activation is not inherited by an automation shell, use the already verified environment interpreter explicitly or `conda run -n duetshift-dev python ...`. Do not reinstall packages merely to run Stage 5.
+
+```powershell
+python scripts/run_challenge_scene.py
+python scripts/run_challenge_scene.py --seed 42
+python scripts/run_challenge_scene.py --seed 43
+python scripts/run_challenge_scene.py --seed 42 --render
+python scripts/run_challenge_scene.py --seed 42 --viewer
+```
+
+Expect two yellow SO-101 arms mounted at a table, a yellow plate, blue hollow mug with a handle, green bottle, and fork/spoon inside an open-top drawer. The drawer is physically movable along its slide joint but stays closed during the normal run. The robots hold their rest pose. Nothing picks up objects or opens the drawer automatically.
+
+A **seed** is an integer used to reproduce the initial scene. Running seed 42 again restores the same sampled positions, orientations, masses, friction and visual choices; seed 43 gives a different conservative variation. The script prints the samples, settled object positions, drawer position, cameras and PASS/FAIL checks.
+
+`--render` checks all three cameras without opening a viewer. `--save-images` additionally saves small inspection PNGs under ignored `tmp/challenge_scene/`; these are temporary local files, not training data. `--viewer` opens the overview and closes after 8 seconds. Close the window early if desired. For a longer normal inspection session:
+
+```powershell
+python scripts/run_challenge_scene.py --seed 42 --viewer --viewer-seconds 120
+```
+
+Allowed viewer duration is 1-300 seconds; a parent timeout also bounds graphics startup. Rendering/viewer failures return a non-zero status and must be investigated before relying on later camera work. No graphics tests are silently skipped.
+
+Run the complete regression suite and dependency check:
+
+```powershell
+python -m pytest
+python -m pip check
+```
+
+Read [challenge scene details](challenge_scene.md) for layout, reset API, metadata, randomization ranges and known modeling limits. **FINAL INTEL DEPLOYMENT IS A SEPARATE LATER STAGE.**

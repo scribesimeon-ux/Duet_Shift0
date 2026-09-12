@@ -164,3 +164,44 @@ Environment verification, both inspection/run commands, all 23 tests, and `pip c
 `git diff --check` and explicit new-file whitespace checks passed. Git still reports LF-to-CRLF warnings on local text files. Vendored original hashes and mesh sizes were verified, with no secrets or unexpected generated binary files found. Two upstream README Markdown line breaks are preserved using a narrowly scoped whitespace attribute. The only new binary files intended for version control are the 13 authenticated source meshes; the visual inspection PNG is ignored.
 
 Final working tree: 4 existing documentation files modified and 29 new files. Stages 1–4 are COMPLETE; Stages 5–21 remain NOT STARTED. Nothing was committed, pushed, reset, rebased, or deleted, and Git remotes were not changed.
+
+
+## Stage 5: Challenge scene, objects and cameras (2026-09-12)
+
+### Authoritative workspace and baseline
+
+Implementation used only `C:\Users\HP\Projects\DuetShift`. The earlier repository location mentioned in historical reports is not the active workspace. The authoritative tree was clean on `main` at `8d4ef27a8d554ff38fc2c8df468a7bcd8a414705` (`feat: add dual SO-101 MuJoCo robots`). Local/stored origin main matched, and a live remote check confirmed synchronization. All 23 baseline tests passed in 3.21 seconds before scene modifications.
+
+The explicit interpreter was `C:\Users\HP\miniforge3\envs\duetshift-dev\python.exe`, Python 3.12.14, MuJoCo 3.13.0. `duetshift.__file__` resolved to `C:\Users\HP\Projects\DuetShift\src\duetshift\__init__.py`. Direct invocation avoids the previously observed automation-shell fallback to system Python. No interpreter installation, editable reinstall, PATH, Conda, Git trust or remote changes were made. Host execution permission was required because the authoritative workspace is outside the session's configured writable sandbox; Git trust settings were retained.
+
+### Scene and physics
+
+The new wrapper composes two unchanged authentic SO-101 instances with a collidable four-legged table, physically constrained sliding drawer, and five free rigid objects: plate, hollow handled mug, fork, spoon and bottle. No official challenge starter scene was present locally, and no external scene asset was downloaded. Primitive household objects are project-created approximations. The existing SO-101 provenance/license and all vendored robot files are preserved.
+
+Table surface is 0.70 m high, with a 0.68 by 0.80 m top. Fixed robot mounts preserve 0.44 m base separation and rest targets. The open-top cabinet is centered at `(0.14, -0.02)`, contains fork/spoon and guides the drawer along a limited 0..0.09 m slide joint. There is no opening controller. See [challenge scene details](challenge_scene.md) and `configs/challenge_scene.json` for dimensions and limits.
+
+Seeds 0, 1, 42, 43 and 99 passed zero-contact initialization and 1.5-second settling checks. Drawer initialization at 0%, 25%, 50%, 75% and 100% of travel also settled without unexpected contacts. Objects retained support, finite state and low residual speeds. Seed 42/43 maximum robot drift was 0.000764865 rad; drawer drift was below 1.1e-9 m. All MuJoCo warning counters remained zero. Existing smoke, single-arm and dual-arm run commands also passed.
+
+Only assigned object/table and utensil/tray-floor contacts are accepted during settling, with a 0.8 mm temporary penetration limit. Initial bounds include rotated/scaled object footprints, support heights and actual contacts. Actual base mesh vertices provide a table-clearance check for the upstream base collision omission; no robot collision geometry was added.
+
+### Seeds and cameras
+
+Private seeded sampling controls conservative XY/yaw changes, mass, sliding friction, 0.98/1/1.02 uniform scale, light intensity and neutral background color. Reset recreates model/data, restoring physical parameters as well as poses. Tests confirmed exact same-seed sample/qpos/mass/friction/size reproduction after stepping and changing seed, and different object poses for seed 43. Actual samples are exposed in metadata and runner output.
+
+All three cameras (`overview`, `task`, `drawer`) rendered non-uniform `(240, 320, 3)` uint8 RGB frames for seeds 42 and 43. Geometric segmentation verified each camera's required coverage. Seed 42 task view showed all five objects; the drawer view contained 461 fork pixels and 482 spoon pixels. The overview shows both arms but occludes the small fork, which is covered by the task/drawer views.
+
+The official passive viewer opened and closed successfully after the bounded eight-second session, with a parent-process timeout. This is viewer lifecycle evidence. Separately, all three RGB inspection images were visually examined: two mounted arms, table, drawer and all required objects are present with no obvious intersections. The small PNGs are under ignored `tmp/challenge_scene/`, not staged or intended for Git. Manual early-close interaction was not tested.
+
+### Validation and resolved issues
+
+The first scene trial correctly failed because the initial drawer placement intersected an arm shoulder. Moving the drawer into the central region resolved it. A rotated base bounding box initially reported a false table intersection; the exact transformed mesh vertices showed about 0.6 mm clearance and are now used for that check.
+
+The first new-test run had 12 failures and 6 passes because default support contact softness let objects briefly exceed the chosen 0.8 mm penetration limit. Object, table and tray-floor contact time constants were set to 0.008 s with damping ratio 1. The source robot contact parameters were untouched. The corrected 18-test scene suite passed; a subsequent preservation test brought the final scene count to 19. All failed trial commands were investigated, not ignored or bypassed.
+
+The final full suite passed **42 tests in 16.73 seconds**, including all 23 baseline tests and 19 Stage 5 checks; none skipped. Rendering tests use bounded subprocesses to isolate OpenGL/native failure. `pip check` reported no broken requirements. No Python package was installed or upgraded. No LeRobot, PyTorch, OpenVINO, Speechmatics, ROS2, Docker, Gymnasium, planning or perception library was added.
+
+### Scope and remaining limitations
+
+The drawer is a simplified open-top fixture. The spoon bowl is solid; object dimensions, mass distribution and material contacts are approximate. Robot bases are fixed to the world rather than simulated mounting hardware. The upstream base collision limitation remains. Reachability, gripping, moving-drawer interactions, bimanual tasks and robustness outside the conservative reset ranges are unvalidated later-stage work. No manipulation, IK, opening controller, planning, AI, perception, recovery, liquid simulation or final Intel deployment was implemented.
+
+Stage 5 is COMPLETE based on the scene, physics, camera, regression and dependency checks. Stages 6-21 remain NOT STARTED. Final Git/new-file checks are recorded with the delivery report. No commit or push was performed.

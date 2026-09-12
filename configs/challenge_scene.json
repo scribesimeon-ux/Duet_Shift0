@@ -1,0 +1,236 @@
+{
+  "table": {
+    "center_xy": [
+      0.22,
+      0
+    ],
+    "size": [
+      0.68,
+      0.8,
+      0.035
+    ],
+    "surface_z": 0.7
+  },
+  "robots": {
+    "arm_a": [
+      0,
+      -0.22,
+      0.703
+    ],
+    "arm_b": [
+      0,
+      0.22,
+      0.703
+    ]
+  },
+  "workspace_xy": [
+    [
+      0.25,
+      0.51
+    ],
+    [
+      -0.24,
+      0.25
+    ]
+  ],
+  "drawer": {
+    "center_xy": [
+      0.14,
+      -0.02
+    ],
+    "cabinet_size": [
+      0.18,
+      0.16,
+      0.055
+    ],
+    "tray_size": [
+      0.15,
+      0.13,
+      0.035
+    ],
+    "floor_z": 0.71,
+    "travel": 0.09,
+    "wall": 0.003
+  },
+  "objects": {
+    "plate": {
+      "xy": [
+        0.34,
+        0
+      ],
+      "footprint": [
+        0.069,
+        0.069
+      ],
+      "mass": 0.12,
+      "support": "table",
+      "rgba": [
+        0.92,
+        0.72,
+        0.26,
+        1
+      ]
+    },
+    "mug": {
+      "xy": [
+        0.34,
+        0.17
+      ],
+      "footprint": [
+        0.052,
+        0.033
+      ],
+      "mass": 0.09,
+      "support": "table",
+      "rgba": [
+        0.18,
+        0.65,
+        0.8,
+        1
+      ]
+    },
+    "bottle": {
+      "xy": [
+        0.44,
+        -0.15
+      ],
+      "footprint": [
+        0.026,
+        0.026
+      ],
+      "mass": 0.14,
+      "support": "table",
+      "rgba": [
+        0.35,
+        0.72,
+        0.35,
+        1
+      ]
+    },
+    "fork": {
+      "xy": [
+        0.14,
+        -0.052
+      ],
+      "footprint": [
+        0.058,
+        0.014
+      ],
+      "mass": 0.018,
+      "support": "drawer",
+      "rgba": [
+        0.7,
+        0.76,
+        0.85,
+        1
+      ]
+    },
+    "spoon": {
+      "xy": [
+        0.14,
+        0.012
+      ],
+      "footprint": [
+        0.058,
+        0.015
+      ],
+      "mass": 0.018,
+      "support": "drawer",
+      "rgba": [
+        0.88,
+        0.66,
+        0.48,
+        1
+      ]
+    }
+  },
+  "randomization": {
+    "table_xy": 0.008,
+    "drawer_xy": 0.002,
+    "yaw": 0.06,
+    "mass_multiplier": [
+      0.9,
+      1.1
+    ],
+    "friction": [
+      0.7,
+      0.9
+    ],
+    "scale_variants": [
+      0.98,
+      1.0,
+      1.02
+    ],
+    "light_gain": [
+      0.9,
+      1.1
+    ],
+    "backgrounds": [
+      [
+        0.24,
+        0.29,
+        0.34,
+        1
+      ],
+      [
+        0.31,
+        0.28,
+        0.25,
+        1
+      ]
+    ],
+    "spawn_gap": 0.002
+  },
+  "cameras": {
+    "overview": {
+      "role": "Both arms and complete work surface",
+      "pos": [
+        1.05,
+        -1.2,
+        1.5
+      ],
+      "target": [
+        0.2,
+        0,
+        0.79
+      ],
+      "fovy": 44
+    },
+    "task": {
+      "role": "Plate, mug, bottle and central workspace",
+      "pos": [
+        0.48,
+        0.02,
+        1.38
+      ],
+      "target": [
+        0.29,
+        0,
+        0.71
+      ],
+      "fovy": 49
+    },
+    "drawer": {
+      "role": "Open-top drawer, fork and spoon",
+      "pos": [
+        0.16,
+        0.3,
+        1.14
+      ],
+      "target": [
+        0.14,
+        -0.02,
+        0.72
+      ],
+      "fovy": 39
+    }
+  },
+  "simulation": {
+    "timestep": 0.002,
+    "settle_steps": 750,
+    "max_robot_drift": 0.05,
+    "max_object_speed": 0.05,
+    "max_object_angular_speed": 0.5,
+    "penetration_tolerance": 0.0008
+  }
+}
