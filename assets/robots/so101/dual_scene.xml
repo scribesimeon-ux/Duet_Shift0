@@ -1,0 +1,17 @@
+<mujoco model="duetshift_dual_so101">
+  <!-- DuetShift placement only; both attachments use the same unmodified model. -->
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+  <asset>
+    <model name="so101" file="upstream/so101_new_calib.xml"/>
+  </asset>
+  <worldbody>
+    <light name="inspection_light" pos="0 -1 2"/>
+    <geom name="floor" type="plane" size="1 1 0.05" pos="0 0 -0.003" rgba="0.35 0.4 0.45 1"/>
+    <frame name="arm_a_mount" pos="0 -0.22 0">
+      <attach model="so101" body="base" prefix="arm_a/"/>
+    </frame>
+    <frame name="arm_b_mount" pos="0 0.22 0">
+      <attach model="so101" body="base" prefix="arm_b/"/>
+    </frame>
+  </worldbody>
+</mujoco>

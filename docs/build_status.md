@@ -1,11 +1,11 @@
 # Build status
 
-Stages 1, 2, and 3 are complete. The single-body MuJoCo smoke foundation works; robots and all later-stage components are NOT IMPLEMENTED.
+Stages 1–4 are complete. The MuJoCo smoke foundation and authentic dual SO-101 model work. Manipulation and all later-stage components are NOT IMPLEMENTED.
 
 1. Repository & machine audit — COMPLETE
 2. Python environment & dependency policy — COMPLETE
 3. MuJoCo smoke foundation — COMPLETE
-4. Dual SO-101 model — NOT STARTED
+4. Dual SO-101 model — COMPLETE
 5. Challenge scene, objects & cameras — NOT STARTED
 6. Robot control foundation — NOT STARTED
 7. Single-arm manipulation skills — NOT STARTED

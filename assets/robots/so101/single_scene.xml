@@ -1,0 +1,12 @@
+<mujoco model="duetshift_single_so101">
+  <!-- DuetShift scene wrapper; the attached upstream robot is unmodified. -->
+  <asset>
+    <model name="so101" file="upstream/so101_new_calib.xml"/>
+  </asset>
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+  <worldbody>
+    <attach model="so101" body="base" prefix=""/>
+    <light name="inspection_light" pos="0 -1 2"/>
+    <geom name="floor" type="plane" size="1 1 0.05" pos="0 0 -0.003" rgba="0.35 0.4 0.45 1"/>
+  </worldbody>
+</mujoco>

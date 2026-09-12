@@ -1,0 +1,4 @@
+# Keep vendored originals byte-for-byte consistent with the provenance hashes.
+assets/robots/so101/upstream/** -text
+# Preserve intentional upstream Markdown line breaks without rewriting attribution.
+assets/robots/so101/upstream/README.md whitespace=-blank-at-eol

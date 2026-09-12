@@ -98,6 +98,37 @@ The scene is resolved relative to the installed source file, so changing the wor
 
 If an automation terminal does not inherit your activated Conda environment, explicitly use `conda run -n duetshift-dev python ...` or the existing environment's Python executable after verifying its version and path. Do not install into the system interpreter or create another environment.
 
+## SO-101 model inspection (Stage 4)
+
+Stage 4 adds TheRobotStudio's actual SO-101 model and a scene containing two instances. It adds no manipulation, IK, table-setting task, or AI. Read [SO-101 provenance](so101_model_provenance.md) for the exact source revision, license, limits, and collision caveats.
+
+In a PowerShell terminal at the repository root:
+
+```powershell
+conda activate duetshift-dev
+python --version
+python -c "import sys; print(sys.executable)"
+python scripts/inspect_so101.py
+python scripts/run_dual_so101.py
+```
+
+Python must be 3.12 from `duetshift-dev`. The first script prints the upstream identifier, six joints, their angular limits, their actuator mappings, and gripper/body/site names. It runs two simulated seconds with fixed rest targets and should end with `SINGLE SO-101 PASS`.
+
+The second script prints the `arm_a/` and `arm_b/` names, independently mapped actuators, a base separation of 0.44 m, and empty initial contact lists. A successful two-second rest hold ends with `DUAL SO-101 PASS`. Both arms use the exact same upstream geometry and existing position servos. They are held at their source zero pose; this is not task execution.
+
+To view either model:
+
+```powershell
+python scripts/inspect_so101.py --viewer
+python scripts/run_dual_so101.py --viewer
+```
+
+The dual viewer should show two separated SO-101 arms facing forward. Close it early if desired; it auto-closes after 8 seconds. A 25-second parent-process timeout also covers loading and graphics startup. No viewer process should be left running. A graphics failure is reported separately after the physics result and returns a non-zero status; `VIEWER PASS` indicates a clean viewer lifecycle.
+
+Run all checks with `python -m pytest`, and check dependencies with `python -m pip check`. Stage 4 needs no new Python packages: MuJoCo 3.13.0 and its existing dependencies suffice. The copied robot meshes and their license live in `assets/robots/so101/upstream/`; do not remove that folder or edit it without updating provenance. No extra asset download is needed when using the complete repository.
+
+Joint values, including the gripper hinge, are radians. They are not LeRobot's normalized 0–100 gripper convention. Base collision geometry is absent upstream, and mesh collision is not validated for arbitrary future task poses. The current checks establish a stable initial model only; later task/contact validation remains separate work.
+
 ## Select the interpreter in VS Code
 
 Press **Ctrl+Shift+P**, choose **Python: Select Interpreter**, and select the **duetshift-dev Python 3.12** interpreter. If it is not listed, use **Enter interpreter path** and browse to the executable reported by the earlier command. If the command is unavailable, VS Code's Python extension needs to be enabled or installed. No machine-specific interpreter path is stored in this repository.

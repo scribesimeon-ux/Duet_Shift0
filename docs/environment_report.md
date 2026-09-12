@@ -126,3 +126,41 @@ The first complete host pytest run reported 11 passed and one fixture setup erro
 ### Final Stage 3 acceptance
 
 The complete rerun passed **12 tests in 2.33 seconds**, including all 3 unchanged Stage 2 tests and the isolated offscreen render check; no tests were skipped. Environment verification and the default non-GUI smoke script exited 0. `pip check` reported no broken requirements, and installed duetshift metadata lists `mujoco==3.13.0`. Module discovery confirmed torch, lerobot, openvino, speechmatics, and rclpy are absent. The repository diff and new text files were reviewed for scope, whitespace, secrets, and unexpected binaries. Stage 3 is COMPLETE; Stages 4–21 remain NOT STARTED. No commits, pushes, resets, remote changes, or existing working-file deletions were performed.
+
+## Stage 4: Dual SO-101 model (2026-09-12)
+
+### Preflight and source
+
+The working tree was clean on `main` at committed Stage 3 revision `76333679e4bbf12860d1d5a05300c0b02e091b5e`. Local and stored `origin/main` matched, and a live `git ls-remote origin refs/heads/main` check confirmed the same remote revision. Only the Stage 3 sphere asset and existing simulation/tests were present; no SO-101 or official challenge starter assets were found in the repository. Existing ignored editor configuration was left alone.
+
+All execution used the explicitly verified `C:\Users\HP\miniforge3\envs\duetshift-dev\python.exe`: Python 3.12.14 and MuJoCo 3.13.0. This retains the authorized direct-interpreter approach instead of assuming that the automation shell inherited terminal activation. No package was installed or upgraded and no environment or shell configuration changed.
+
+The priority-2 official robot source is TheRobotStudio/SO-ARM100, commit `eecbe3e0a9ebb23e25ad7b2759b03884c6660903`, `Simulation/SO101/so101_new_calib.xml`. No verifiable public Intel starter asset download was located. This is not described as an Intel-certified asset. Sixteen unmodified upstream files (MJCF, 13 meshes, model README, Apache-2.0 license) total 16,156,001 bytes. The manifest preserves exact source paths and SHA256 values. See [model provenance](so101_model_provenance.md) and the asset attribution file for full lineage and local wrapper changes.
+
+### Model and physics results
+
+The source single arm loaded first with six hinge joints, six existing position actuators, and both source reference sites. Joint/control ranges, actuator transmissions, force limits, collision masks, and gripper mapping were inspected. It has a moving-jaw hinge and a fixed jaw represented by source geometry. Initial joint coordinates and constant actuator targets are zero. No geometry, inertias, collision filters, gains, or joint ranges were edited.
+
+The dual scene attaches two copies with `arm_a/` and `arm_b/` prefixes, twelve distinct joints/actuators, and bases at `(0, -0.22, 0)` and `(0, 0.22, 0)` metres. Base separation is 0.44 m. Both face approximately +X, with future shared workspace ahead/between them; task reachability has not been solved. Both scenes use gravity -9.81 m/s² and timestep 0.002 s.
+
+Single and dual two-second idle simulations passed. Maximum observed joint drift was 0.000764865 rad and maximum speed 0.0503492 rad/s, with finite state/accelerations, advancing time, zero MuJoCo warning counters, and no initial or ongoing self/floor/inter-arm contacts. A test-only overlapping placement correctly produced negative-distance inter-arm contacts. This demonstrates collision detection is active; it does not certify all possible future robot configurations.
+
+### Viewer and tests
+
+`python scripts/run_dual_so101.py --viewer` succeeded in the permitted Windows desktop process. The official passive viewer performed 438 updates and closed cleanly after its bounded run. A separate 640x480 render was visually inspected and shows two separated, upright-mounted arms. Segmentation identified 8,135 visible arm-A pixels and 5,457 arm-B pixels, confirming both models appear in the view. The 43,415-byte inspection PNG is in ignored `tmp/stage04_dual_so101.png`, not a tracked dataset or benchmark artifact. Manual early-close interaction was not tested.
+
+The full suite passed **23 tests in 3.53 seconds**, including all 12 previous tests and 11 new model tests. No tests were skipped. The new tests verify upstream hashes, source joint ranges, gripper/sites, collision activity, unchanged geometry/dynamics across instances, unique actuator mappings, base separation, initial contacts, and idle stability. `pip check` reported no broken requirements.
+
+### Problems and limitations
+
+The web browser fetcher could not retrieve three pinned upstream XML URLs (cache-miss errors). Direct HTTPS retrieval from those same official URLs succeeded. The first local wrapper's plain XML include failed to resolve a mesh path; replacing that include with native MJCF model attachment fixed the problem while keeping upstream files unchanged. These were source retrieval/integration issues, not missing packages.
+
+The original base collision omission, convex mesh collision behavior, angular gripper convention, and lack of physical calibration are documented in provenance. Stable rest uses the source position servos, not passive unpowered behavior. No manipulation, IK, planning, policies, perception, table assets, or future-stage dependencies were introduced. Stage 5 will need task-specific contact and camera checks; no current model-load or rendering blocker was observed.
+
+### Final Stage 4 repository checks
+
+Environment verification, both inspection/run commands, all 23 tests, and `pip check` passed. Module discovery confirmed torch, lerobot, openvino, speechmatics, rclpy, transformers, and diffusers are absent. Dependency declarations and prior simulation/tests were unchanged. No ROS2, Docker, or other framework was added.
+
+`git diff --check` and explicit new-file whitespace checks passed. Git still reports LF-to-CRLF warnings on local text files. Vendored original hashes and mesh sizes were verified, with no secrets or unexpected generated binary files found. Two upstream README Markdown line breaks are preserved using a narrowly scoped whitespace attribute. The only new binary files intended for version control are the 13 authenticated source meshes; the visual inspection PNG is ignored.
+
+Final working tree: 4 existing documentation files modified and 29 new files. Stages 1–4 are COMPLETE; Stages 5–21 remain NOT STARTED. Nothing was committed, pushed, reset, rebased, or deleted, and Git remotes were not changed.
